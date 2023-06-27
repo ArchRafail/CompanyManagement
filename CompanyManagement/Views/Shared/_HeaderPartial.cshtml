@@ -1,0 +1,39 @@
+﻿@{
+    string path = Context.Request.Path;
+    string query = Context.Request.Query["id"].ToString();
+}
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="logo-wrapper gap-1 me-4" asp-area="" asp-controller="Employee" asp-action="Index">
+                <div class="image-wrapper">
+                    <img src="https://localhost:7295/images/CompanyLogo_500x500_color.jpg" alt="Company logo" />
+                </div>
+                <div class="text-wrapper text-dark fs-5 fw-medium">
+                    Company Management
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav nav-pills flex-grow-1 gap-3">
+                    <li class="nav-item">
+                        <a class="nav-link @(path.EndsWith("/") ? "active text-white" : "text-dark")" asp-area="" asp-controller="Employee" asp-action="Index">Employees</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @((path.EndsWith("/AddEmployee") && String.IsNullOrEmpty(query)) ? "active text-white" : "text-dark")" asp-area="" asp-controller="Employee" asp-action="AddEmployee">Add Employee</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(path.EndsWith("/Department") ? "active text-white" : "text-dark")" asp-area="" asp-controller="Department" asp-action="Index">Departments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @((path.EndsWith("/AddDepartment") && String.IsNullOrEmpty(query)) ? "active text-white" : "text-dark")" asp-area="" asp-controller="Department" asp-action="AddDepartment">Add Department</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

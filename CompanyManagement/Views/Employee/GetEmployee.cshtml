@@ -1,0 +1,55 @@
+﻿@using CompanyManagement.ViewModels
+@model ChangeViewModel
+
+@{
+    Layout = "../_Layout";
+}
+
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.10/jquery.validate.unobtrusive.min.js"></script>
+
+<div class="container w-50 align-content-center">
+
+    <h2 class="text-center my-5">Update Employee Id@(Model.Employee!.Id)</h2>
+
+    <form method="post" asp-controller="Employee" asp-action="Update">
+
+        <div class="mb-3">
+            <label for="" class="form-label">Id</label>
+            <input type="number" class="form-control" asp-for="Employee!.Id" value="@(Model.Employee.Id != 0 ? Model.Employee.Id : 0)" readonly />
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Name</label>
+            <input type="text" class="form-control" asp-for="Employee!.Name" value="@(Model.Employee.Name != null ? Model.Employee.Name : "")">
+            <span asp-validation-for="Employee!.Name" class="fst-italic text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Email</label>
+            <input type="text" class="form-control" asp-for="Employee!.Email" value="@(Model.Employee.Email != null ? Model.Employee.Email : "")">
+            <span asp-validation-for="Employee!.Email" class="fst-italic text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Phone number</label>
+            <input type="text" class="form-control" asp-for="Employee!.PhoneNumber" value="@(Model.Employee.PhoneNumber != null ? Model.Employee.PhoneNumber : "")">
+            <span asp-validation-for="Employee!.PhoneNumber" class="fst-italic text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Department</label>
+            <select asp-for="DepartmentId" class="form-control form-select">
+                @foreach (var department in Model.Departments!)
+                {
+                    <option value="@department.Id" selected="@(Model.Employee.Department != null && Model.Employee.Department.Id==department.Id)">@department.Name</option>
+                }
+            </select>
+            <span asp-validation-for="DepartmentId" class="fst-italic text-danger"></span>
+        </div>
+
+        <div class="row justify-content-center gap-4">
+            <button type="submit" class="btn btn-success w-25">Update</button>
+            <input type="button" class="btn btn-primary w-25" onclick="window.location='@Url.Action("Index","Employee")'" value="Return" />
+        </div>
+
+    </form>
+
+</div>

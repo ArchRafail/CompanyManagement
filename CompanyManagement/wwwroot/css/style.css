@@ -1,0 +1,51 @@
+﻿.navbar .logo-wrapper {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    text-decoration: none;
+}
+
+.navbar .logo-wrapper .image-wrapper {
+    width: 80px;
+    display: inline-block;
+    border-radius: 50%;
+    overflow: hidden
+}
+
+.navbar .logo-wrapper .image-wrapper img {
+    width: 100%;
+    transform: scale(1.05, 1.05);
+    margin-left: -2px;
+}
+
+.navbar .logo-wrapper .text-wrapper {
+    overflow-wrap: normal;
+    width: 130px;
+    text-align: center;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #28bdff !important;
+    border-radius: 30%;
+}
+
+.content {
+    min-height: 80vh;
+}
+
+.employee-table th,
+.employee-table td,
+.department-table th,
+.department-table td {
+    padding: 15px;
+}
+
+.employee-table tr:nth-child(even),
+.department-table tr:nth-child(even) {
+    background: #CCC;
+}
+
+.employee-table tr:nth-child(odd),
+.department-table tr:nth-child(odd) {
+    background: #FFF;
+}

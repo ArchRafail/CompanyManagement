@@ -1,0 +1,49 @@
+﻿@using CompanyManagement.Models
+@model IEnumerable<Department>
+
+@{
+    Layout = "../_Layout";
+}
+
+<h2 class="text-center my-5">Departments</h2>
+<form class="department-table" method="post">
+    <div class="row justify-content-center">
+        <table>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Manager</th>
+                <th>Employees</th>
+                <th>Actions</th>
+            </tr>
+            @foreach (var department in Model)
+            {
+                <tr>
+                    <td>@department.Id</td>
+                    <td>@department.Name</td>
+                    <td>@department.Manager</td>
+                    <td>
+                        <div class="d-flex flex-column justify-content-center">
+                            @if (department.Employees != null)
+                            {
+                                @foreach(var employee in department.Employees)
+                                {
+                                    <div>@employee.Id, @employee.Name</div>
+                                }
+                            }
+                        </div>
+                    </td>
+                    <td>
+                        <input type="button" class="btn btn-primary" onclick="window.location='@Url.Action("GetDepartment","Department",  new { id = @department.Id })'" value="Update" />
+                        <input type="submit" class="btn btn-warning ms-2" asp-controller="Department" asp-action="Delete" asp-route-id="@department.Id" value="Delete" />
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</form>
+<div class="row justify-content-center mt-3">
+    <div class="col-2">
+        <input type="button" class="btn btn-primary w-100 p-2" onclick="window.location='@Url.Action("AddDepartment","Department")'" value="Add Department" />
+    </div>
+</div>
