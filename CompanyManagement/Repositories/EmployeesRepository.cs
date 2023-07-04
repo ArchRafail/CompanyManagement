@@ -20,7 +20,9 @@ namespace CompanyManagement.Repositories
 
         public Employee? Get(int id)
         {
-            return companyDbContext.Employees.Include(e => e.Department).SingleOrDefault(x => x.Id == id);
+            var employee = companyDbContext.Employees.Include(e => e.Department).SingleOrDefault(x => x.Id == id);
+            companyDbContext.Entry(employee!).State = EntityState.Detached;
+            return employee;
         }
 
         public void Add(Employee employee)
@@ -31,7 +33,9 @@ namespace CompanyManagement.Repositories
 
         public void Update(Employee employee)
         {
-            companyDbContext.Update(employee);
+            companyDbContext.Employees.Update(employee);
+            companyDbContext.Attach(employee);
+            companyDbContext.Entry(employee).State = EntityState.Modified;
             companyDbContext.SaveChanges();
         }
 

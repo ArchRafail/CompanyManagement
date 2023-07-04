@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CompanyManagement.Models;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CompanyManagement.Models
+namespace CompanyManagement.ViewModels
 {
-    public class Employee
+    public class EmployeeModel
     {
-        [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Name can't be empty!")]
@@ -25,10 +23,18 @@ namespace CompanyManagement.Models
         [Required(ErrorMessage = "Role can't be empty!")]
         public string? Role { get; set; }
 
-        public string? Password { get; set; }
-
-        [ForeignKey("Department")]
         public int DepartmentId { get; set; }
-        public Department? Department { get; set; }
+
+        public EmployeeModel() { }
+
+        public EmployeeModel(Employee employee)
+        {
+            Id = employee.Id;
+            Name = employee.Name;
+            Email = employee.Email;
+            PhoneNumber = employee.PhoneNumber;
+            Role = employee.Role;
+            DepartmentId = employee.DepartmentId;
+        }
     }
 }

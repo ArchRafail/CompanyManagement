@@ -1,11 +1,14 @@
 ﻿using CompanyManagement.Interfaces;
 using CompanyManagement.Models;
 using CompanyManagement.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Text.RegularExpressions;
 
 namespace CompanyManagement.Controllers
 {
+    [Authorize]
     public class DepartmentController : Controller
     {
         private readonly IEmployeesRepository _employeesRepository;
@@ -24,6 +27,7 @@ namespace CompanyManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult GetDepartment(int id)
         {
             Department? department = _departmentsRepository.Get(id);
@@ -40,6 +44,7 @@ namespace CompanyManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult AddDepartment()
         {
             Department department = new Department();
@@ -47,6 +52,7 @@ namespace CompanyManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult AddDepartment(Department department)
         {
             ModelValidating(department);
@@ -59,6 +65,7 @@ namespace CompanyManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Update(Department department)
         {
             ModelValidating(department);
@@ -79,13 +86,22 @@ namespace CompanyManagement.Controllers
             }
             if (ModelState.IsValid)
             {
-                _departmentsRepository.Update(department);
+                Department departmentUpdated = new Department();
+                departmentUpdated.Id = department.Id;
+                departmentUpdated.Name = department.Name;
+                departmentUpdated.Manager = department.Manager;
+                if (department.Employees != null && department.Employees.Count != 0)
+                {
+                    departmentUpdated.Employees = department.Employees;
+                }
+                _departmentsRepository.Update(departmentUpdated);
                 return RedirectToAction("Index");
             }
             return RedirectToAction("GetDepartment", new { id = department.Id });
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Delete(int id)
         {
             _departmentsRepository.Delete(id);

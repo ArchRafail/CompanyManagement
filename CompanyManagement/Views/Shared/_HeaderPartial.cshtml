@@ -1,6 +1,9 @@
-﻿@{
+﻿@using System.Security.Claims;
+@{
     string path = Context.Request.Path;
     string query = Context.Request.Query["id"].ToString();
+    var userRole = Context.User.FindFirst(ClaimTypes.Role);
+    var user = Context.User.FindFirst(ClaimTypes.Name);
 }
 
 <header>
@@ -21,19 +24,39 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav nav-pills flex-grow-1 gap-3">
                     <li class="nav-item">
-                        <a class="nav-link @(path.EndsWith("/") ? "active text-white" : "text-dark")" asp-area="" asp-controller="Employee" asp-action="Index">Employees</a>
+                        <a class="nav-link @(path.EndsWith("/Employee/Index") ? "active text-white" : "text-dark")" asp-area="" asp-controller="Employee" asp-action="Index">Employees</a>
                     </li>
+                    @if (userRole != null && userRole.Value == "admin")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @((path.EndsWith("/AddEmployee") && String.IsNullOrEmpty(query)) ? "active text-white" : "text-dark")" asp-area="" asp-controller="Employee" asp-action="AddEmployee">Add Employee</a>
+                        </li>
+                    }
                     <li class="nav-item">
-                        <a class="nav-link @((path.EndsWith("/AddEmployee") && String.IsNullOrEmpty(query)) ? "active text-white" : "text-dark")" asp-area="" asp-controller="Employee" asp-action="AddEmployee">Add Employee</a>
+                        <a class="nav-link @(path.EndsWith("/Department/Index") ? "active text-white" : "text-dark")" asp-area="" asp-controller="Department" asp-action="Index">Departments</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(path.EndsWith("/Department") ? "active text-white" : "text-dark")" asp-area="" asp-controller="Department" asp-action="Index">Departments</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @((path.EndsWith("/AddDepartment") && String.IsNullOrEmpty(query)) ? "active text-white" : "text-dark")" asp-area="" asp-controller="Department" asp-action="AddDepartment">Add Department</a>
-                    </li>
+                    @if (userRole != null && userRole.Value == "admin")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @((path.EndsWith("/AddDepartment") && String.IsNullOrEmpty(query)) ? "active text-white" : "text-dark")" asp-area="" asp-controller="Department" asp-action="AddDepartment">Add Department</a>
+                        </li>
+                    }
                 </ul>
             </div>
+            @if (user != null)
+            {
+                <div class="d-flex align-items-center gap-2">
+                    <div class="col-auto">
+                        Hello, @user.Value
+                    </div>
+                    <div class="col-auto">
+                        <input type="button" class="btn btn-success" onclick="window.location='@Url.Action("PasswordChange","Account")'" value="Change Password" />
+                    </div>
+                    <div>
+                        <input type="button" class="btn btn-warning" onclick="window.location='@Url.Action("Logout","Account")'" value="Logout" />
+                    </div>
+                </div>
+            }
         </div>
     </nav>
 </header>

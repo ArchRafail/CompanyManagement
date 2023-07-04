@@ -24,6 +24,12 @@ namespace CompanyManagement.Repositories
                 new Department() { Id = 6, Name = "Engineering", Manager = "Mahatma Gandhi"}
             };
 
+            List<string> roles = new List<string>()
+            {
+                { "admin"},
+                { "user" }
+            };
+
             modelBuilder.Entity<Department>().HasData(
                 departments[0],
                 departments[1],
@@ -41,7 +47,9 @@ namespace CompanyManagement.Repositories
                     Name = "Theodore Roosevelt",
                     Email = "t.roosevelt@comp.com",
                     PhoneNumber = "380671234567",
-                    DepartmentId = departments[0].Id
+                    DepartmentId = departments[0].Id,
+                    Role = roles[1],
+                    Password = "25d55ad283aa400af464c76d713c07ad" // 12345678 in MD5
                 },
                 new Employee()
                 {
@@ -49,7 +57,9 @@ namespace CompanyManagement.Repositories
                     Name = "Dwight Eisenhower",
                     Email = "de@comp.com",
                     PhoneNumber = "380957654321",
-                    DepartmentId = departments[1].Id
+                    DepartmentId = departments[1].Id,
+                    Role = roles[1],
+                    Password = "1bbd886460827015e5d605ed44252251" // 11111111 in MD5
                 },
                 new Employee()
                 {
@@ -57,7 +67,9 @@ namespace CompanyManagement.Repositories
                     Name = "Ronald Reagan",
                     Email = "rore@sale.comp.com",
                     PhoneNumber = "380960246897",
-                    DepartmentId = departments[2].Id
+                    DepartmentId = departments[2].Id,
+                    Role = roles[1],
+                    Password = "1bbd886460827015e5d605ed44252251" // 11111111 in MD5
                 },
                 new Employee()
                 {
@@ -65,7 +77,9 @@ namespace CompanyManagement.Repositories
                     Name = "Margaret Thatcher",
                     Email = "thatcher@hr.comp.com",
                     PhoneNumber = "380939753102",
-                    DepartmentId = departments[3].Id
+                    DepartmentId = departments[3].Id,
+                    Role = roles[1],
+                    Password = "1bbd886460827015e5d605ed44252251" // 11111111 in MD5
                 },
                 new Employee()
                 {
@@ -73,7 +87,9 @@ namespace CompanyManagement.Repositories
                     Name = "Woodrow Wilson",
                     Email = "woodwi@comp.com",
                     PhoneNumber = "380680918273",
-                    DepartmentId = departments[4].Id
+                    DepartmentId = departments[4].Id,
+                    Role = roles[0],
+                    Password = "5f4dcc3b5aa765d61d8327deb882cf99" // password in MD5
                 },
                 new Employee()
                 {
@@ -81,7 +97,9 @@ namespace CompanyManagement.Repositories
                     Name = "Jawaharlal Nehru",
                     Email = "jawane@comp.com",
                     PhoneNumber = "380989081726",
-                    DepartmentId = departments[5].Id
+                    DepartmentId = departments[5].Id,
+                    Role = roles[1],
+                    Password = "1bbd886460827015e5d605ed44252251" // 11111111 in MD5
                 }
             };
 

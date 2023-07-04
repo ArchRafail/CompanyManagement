@@ -1,11 +1,15 @@
 ﻿using CompanyManagement.Interfaces;
 using CompanyManagement.Models;
 using CompanyManagement.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 
 namespace CompanyManagement.Controllers
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly IEmployeesRepository _employeesRepository;
@@ -24,6 +28,7 @@ namespace CompanyManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult GetEmployee(int id)
         {
             Employee? employee = _employeesRepository.Get(id);
@@ -32,7 +37,7 @@ namespace CompanyManagement.Controllers
                 var departments = _departmentsRepository.GetAll();
                 List<DepartmentModel> departmentModels = departments.Select(dp => new DepartmentModel(dp.Id, dp.Name)).ToList();
                 ChangeViewModel changeViewModel = new ChangeViewModel();
-                changeViewModel.Employee = employee;
+                changeViewModel.Employee = new EmployeeModel(employee);
                 changeViewModel.DepartmentId = employee!.Department!.Id;
                 changeViewModel.Departments = departmentModels;
                 return View(changeViewModel);
@@ -46,17 +51,19 @@ namespace CompanyManagement.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult AddEmployee()
         {
             var departments = _departmentsRepository.GetAll();
             List<DepartmentModel> departmentModels = departments.Select(dp => new DepartmentModel(dp.Id, dp.Name)).ToList();
             ChangeViewModel changeViewModel = new ChangeViewModel();
             changeViewModel.Departments = departmentModels;
-            changeViewModel.Employee = new Employee();
+            changeViewModel.Employee = new EmployeeModel();
             return View(changeViewModel);
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult AddEmployee(ChangeViewModel viewModel)
         {
             ModelValidating(viewModel);
@@ -66,12 +73,27 @@ namespace CompanyManagement.Controllers
                 var departments = _departmentsRepository.GetAll();
                 if (departments != null & departments!.Count != 0)
                 {
-                    employee!.Department = departments.Single(x => x.Id == viewModel.DepartmentId);
-                    if (employee.Department == null)
+                    Department? department = null;
+                    if (viewModel.DepartmentId != null)
+                    {
+                        employee!.DepartmentId = (int)viewModel.DepartmentId;
+                        department = departments.Single(x => x.Id == viewModel.DepartmentId);
+                    }
+                    if (department == null)
                     {
                         return RedirectToAction("AddEmployee");
                     }
-                    _employeesRepository.Add(employee);
+
+                    Employee employeeNew = new Employee();
+                    employeeNew.Id = employee!.Id;
+                    employeeNew.Name = employee!.Name;
+                    employeeNew.Email = employee!.Email;
+                    employeeNew.PhoneNumber = employee!.PhoneNumber;
+                    employeeNew.DepartmentId = employee!.DepartmentId;
+                    employeeNew.Role = "user";
+                    employeeNew.Password = AccountController.CreateMD5("11111111");
+
+                    _employeesRepository.Add(employeeNew);
                 }
                 return RedirectToAction("Index");
             }
@@ -79,6 +101,7 @@ namespace CompanyManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Update(ChangeViewModel viewModel)
         {
             ModelValidating(viewModel);
@@ -103,12 +126,33 @@ namespace CompanyManagement.Controllers
                 var departments = _departmentsRepository.GetAll();
                 if (departments != null & departments!.Count != 0)
                 {
-                    employee!.Department = departments.Single(x => x.Id == viewModel.DepartmentId);
-                    if (employee.Department == null)
+                    Department? department = null;
+                    if (viewModel.DepartmentId != null)
                     {
-                        return RedirectToAction("GetEmployee", new { id = @employee.Id });
+                        employee!.DepartmentId = (int)viewModel.DepartmentId;
+                        department = departments.Single(x => x.Id == viewModel.DepartmentId);
                     }
-                    _employeesRepository.Update(employee);
+                    if (department == null)
+                    {
+                        return RedirectToAction("GetEmployee", new { id = @employee!.Id });
+                    }
+
+                    Employee employeeUpdated = new Employee();
+                    employeeUpdated.Id = employee!.Id;
+                    employeeUpdated.Name = employee!.Name;
+                    employeeUpdated.Email = employee!.Email;
+                    employeeUpdated.PhoneNumber = employee!.PhoneNumber;
+                    employeeUpdated.Role = employee!.Role;
+                    employeeUpdated.DepartmentId = employee!.DepartmentId;
+                    var employeePassword = _employeesRepository.Get(employee.Id)!.Password;
+                    employeeUpdated.Password = employeePassword;
+
+                    _employeesRepository.Update(employeeUpdated);
+
+                    if (employeeUpdated.Id == int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value))
+                    {
+                        AccountController.CreatingClaims(employeeUpdated, HttpContext);
+                    }
                 }
                 return RedirectToAction("Index");
             }
@@ -116,6 +160,7 @@ namespace CompanyManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult Delete(int id)
         {
             _employeesRepository.Delete(id);
@@ -168,7 +213,11 @@ namespace CompanyManagement.Controllers
             }
             if (viewModel.DepartmentId == null || viewModel.DepartmentId == 0)
             {
-                ModelState.AddModelError("DepartmentId", "Department cant be empty or zero!");
+                ModelState.AddModelError("DepartmentId", "Department can't be empty or zero!");
+            }
+            if (string.IsNullOrEmpty(viewModel.Employee.Role))
+            {
+                ModelState.AddModelError("Role", "Role can't be empty!");
             }
         }
     }

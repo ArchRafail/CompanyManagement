@@ -1,8 +1,10 @@
 ﻿@using CompanyManagement.Models
+@using System.Security.Claims;
 @model IEnumerable<Department>
 
 @{
     Layout = "../_Layout";
+    var userRole = Context.User.FindFirst(ClaimTypes.Role);
 }
 
 <h2 class="text-center my-5">Departments</h2>
@@ -14,7 +16,10 @@
                 <th>Name</th>
                 <th>Manager</th>
                 <th>Employees</th>
-                <th>Actions</th>
+                @if (userRole != null && userRole.Value == "admin")
+                {
+                    <th>Actions</th>
+                }
             </tr>
             @foreach (var department in Model)
             {
@@ -33,17 +38,23 @@
                             }
                         </div>
                     </td>
-                    <td>
-                        <input type="button" class="btn btn-primary" onclick="window.location='@Url.Action("GetDepartment","Department",  new { id = @department.Id })'" value="Update" />
-                        <input type="submit" class="btn btn-warning ms-2" asp-controller="Department" asp-action="Delete" asp-route-id="@department.Id" value="Delete" />
-                    </td>
+                    @if (userRole != null && userRole.Value == "admin")
+                    {
+                        <td>
+                            <input type="button" class="btn btn-primary" onclick="window.location='@Url.Action("GetDepartment","Department",  new { id = @department.Id })'" value="Update" />
+                            <input type="submit" class="btn btn-warning ms-2" asp-controller="Department" asp-action="Delete" asp-route-id="@department.Id" value="Delete" />
+                        </td>
+                    }
                 </tr>
             }
         </table>
     </div>
 </form>
-<div class="row justify-content-center mt-3">
-    <div class="col-2">
-        <input type="button" class="btn btn-primary w-100 p-2" onclick="window.location='@Url.Action("AddDepartment","Department")'" value="Add Department" />
+@if (userRole != null && userRole.Value == "admin")
+{
+    <div class="row justify-content-center mt-3">
+        <div class="col-2">
+            <input type="button" class="btn btn-primary w-100 p-2" onclick="window.location='@Url.Action("AddDepartment","Department")'" value="Add Department" />
+        </div>
     </div>
-</div>
+}

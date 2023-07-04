@@ -38,6 +38,20 @@
             </select>
             <span asp-validation-for="DepartmentId" class="fst-italic text-danger"></span>
         </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Role</label>
+            <div class="d-flex row justify-content-start gap-3">
+                <div class="col-auto">
+                    <input type="radio" asp-for="Employee!.Role" value="user" checked="checked" id="UserRole">
+                    <label for="UserRole">User</label>
+                </div>
+                <div class="col-auto">
+                    <input type="radio" asp-for="Employee!.Role" value="admin" id="AdminRole">
+                    <label for="AdminRole">Admin</label>
+                </div>
+            </div>
+            <span asp-validation-for="Employee!.Role" class="fst-italic text-danger"></span>
+        </div>
 
         <div class="row justify-content-center gap-4">
             <button type="submit" class="btn btn-success w-25">Create</button>

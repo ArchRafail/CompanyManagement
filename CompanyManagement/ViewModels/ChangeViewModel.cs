@@ -5,7 +5,7 @@ namespace CompanyManagement.ViewModels
 {
     public class ChangeViewModel
     {
-        public Employee? Employee { get; set; }
+        public EmployeeModel? Employee { get; set; }
 
         [Required(ErrorMessage = "Department cant be empty!")]
         public int? DepartmentId { get; set; }
